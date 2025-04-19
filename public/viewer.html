@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Viewer Overlay</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      font-family: 'Arial', sans-serif;
+      background: transparent;
+    }
+
+    .elimination-container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.9);
+      color: #fff;
+      border-radius: 12px;
+      padding: 20px 30px;
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      opacity: 0;
+      animation: popIn 0.2s ease-out forwards, popOut 0.2s ease-in 2.8s forwards;
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .logo {
+      width: 60px;
+      height: 60px;
+      object-fit: contain;
+      margin-right: 20px;
+      background-color: transparent;
+    }
+
+    .team-info {
+      flex: 1;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .kills {
+      text-align: right;
+      padding-left: 20px;
+    }
+
+    .finishes {
+      font-size: 26px;
+      font-weight: bold;
+    }
+
+    .eliminated-text {
+      font-size: 18px;
+      font-weight: bold;
+      opacity: 0.9;
+    }
+
+    @keyframes popIn {
+      0% { opacity: 0; transform: translate(-50%, -50%) scale(0.6); }
+      100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    }
+
+    @keyframes popOut {
+      0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+      100% { opacity: 0; transform: translate(-50%, -50%) scale(0.6); }
+    }
+  </style>
+</head>
+<body>
+  <div id="display-area"></div>
+  <audio id="eliminationSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_2c5a3be6e0.mp3?filename=game-win-sound-129661.mp3" preload="auto"></audio>
+
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <script>
+    const socket = io();
+    const displayArea = document.getElementById('display-area');
+    const eliminationSound = document.getElementById('eliminationSound');
+
+    let eliminationBackground = "https://i.imgur.com/OhBzBjA.png"; // default
+
+    socket.on('show_elimination', ({ team, kills, logo }) => {
+      const container = document.createElement('div');
+      container.className = 'elimination-container';
+      container.style.background = `url('${eliminationBackground}') center center / cover no-repeat`;
+      container.innerHTML = `
+        <img class="logo" src="${logo}" alt="Logo" />
+        <div class="team-info">${team}</div>
+        <div class="kills">
+          <div class="finishes">${kills} FINISHES</div>
+          <div class="eliminated-text">ELIMINATED</div>
+        </div>
+      `;
+      displayArea.appendChild(container);
+      eliminationSound.currentTime = 0;
+      eliminationSound.play();
+      setTimeout(() => container.remove(), 3000);
+    });
+
+    socket.on('set_background', (url) => {
+      eliminationBackground = url;
+    });
+  </script>
+</body>
+</html>
