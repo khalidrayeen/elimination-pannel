@@ -35,31 +35,36 @@
     const socket = io();
     const teamsContainer = document.getElementById('teams');
 
-    function addTeam(name, logoUrl) {
-      if (!name || !logoUrl) return;
+    function addTeam(name, logoUrl, slotNumber) {
+  if (!name || !logoUrl) return;
 
-      const div = document.createElement('div');
-      div.className = 'team-block';
-      div.innerHTML = `
+  const div = document.createElement('div');
+  div.className = 'team-block';
+  div.innerHTML = `
+    <div style="display: flex; align-items: center;">
+      <div style="margin-right: 10px; font-weight: bold; color: #999;">${slotNumber}</div>
+      <div>
         <div class="team-name">${name}</div>
         <img src="${logoUrl}" alt="Logo" style="width: 60px; height: 60px; object-fit: contain; background: #fff; border-radius: 6px;" />
         <input type="number" placeholder="Kills" class="killInput" />
         <button onclick="eliminate(this, '${name}', '${logoUrl}')">Eliminate</button>
-      `;
-      teamsContainer.appendChild(div);
-    }
+      </div>
+    </div>
+  `;
+  teamsContainer.appendChild(div);
+}
 
-    function addTeamsFromList() {
-      const bulkInput = document.getElementById('bulkTeams').value;
-      const lines = bulkInput.split('\n').map(l => l.trim()).filter(Boolean);
+function addTeamsFromList() {
+  const bulkInput = document.getElementById('bulkTeams').value;
+  const lines = bulkInput.split('\n').map(l => l.trim()).filter(Boolean);
 
-      lines.forEach(line => {
-        const [name, url] = line.split('\t');
-        if (name && url) addTeam(name.trim(), url.trim());
-      });
+  lines.forEach((line, index) => {
+    const [name, url] = line.split('\t');
+    if (name && url) addTeam(name.trim(), url.trim(), index + 2); // Starts from slot #2
+  });
 
-      document.getElementById('bulkTeams').value = '';
-    }
+  document.getElementById('bulkTeams').value = '';
+}
 
     function eliminate(btn, name, logoUrl) {
       const killInput = btn.parentElement.querySelector('.killInput');
