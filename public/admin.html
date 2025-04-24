@@ -27,6 +27,11 @@
     <input type="text" id="backgroundUrlInput" placeholder="Paste background image URL..." />
     <button onclick="updateBackground()">Update Background</button>
   </div>
+  <div style="margin-top: 30px;">
+    <input type="color" id="textColorInput" />
+    <button onclick="applyTextColor()">Apply Text Color</button>
+  </div>
+  
 
   <div id="teams" style="margin-top: 30px;"></div>
 
@@ -34,6 +39,11 @@
   <script>
     const socket = io();
     const teamsContainer = document.getElementById('teams');
+    function applyTextColor() {
+  const color = document.getElementById('textColorInput').value;
+  socket.emit('set_text_color', color);
+  alert('Text color updated!');
+}
 
     function addTeam(name, logoUrl, slotNumber) {
   if (!name || !logoUrl) return;

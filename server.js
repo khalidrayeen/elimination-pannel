@@ -16,6 +16,11 @@ let currentBackground = 'https://i.imgur.com/OhBzBjA.png';
 io.on('connection', (socket) => {
   console.log('A user connected');
 
+  socket.on('set_text_color', (color) => {
+    io.emit('set_text_color', color); // Broadcast to all viewers
+  });
+  
+
   // Send current background to the newly connected client
   socket.emit('set_background', currentBackground);
 

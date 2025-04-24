@@ -17,7 +17,6 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%) scale(0.9);
-      color: #fff;
       border-radius: 12px;
       padding: 20px 30px;
       font-size: 20px;
@@ -79,7 +78,8 @@
     const displayArea = document.getElementById('display-area');
     const eliminationSound = document.getElementById('eliminationSound');
 
-    let eliminationBackground = "https://i.imgur.com/OhBzBjA.png"; // default
+    let eliminationBackground = "https://i.imgur.com/OhBzBjA.png"; // Default background
+    let textColor = '#ffffff'; // Default text color
 
     socket.on('show_elimination', ({ team, kills, logo }) => {
       const container = document.createElement('div');
@@ -87,10 +87,10 @@
       container.style.background = `url('${eliminationBackground}') center center / cover no-repeat`;
       container.innerHTML = `
         <img class="logo" src="${logo}" alt="Logo" />
-        <div class="team-info">${team}</div>
+        <div class="team-info" style="color: ${textColor};">${team}</div>
         <div class="kills">
-          <div class="finishes">${kills} FINISHES</div>
-          <div class="eliminated-text">ELIMINATED</div>
+          <div class="finishes" style="color: ${textColor};">${kills} FINISHES</div>
+          <div class="eliminated-text" style="color: ${textColor};">ELIMINATED</div>
         </div>
       `;
       displayArea.appendChild(container);
@@ -101,6 +101,10 @@
 
     socket.on('set_background', (url) => {
       eliminationBackground = url;
+    });
+
+    socket.on('set_text_color', (color) => {
+      textColor = color;
     });
   </script>
 </body>
